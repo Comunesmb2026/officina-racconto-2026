@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Votazione Popolare – L'Officina del Racconto 2026</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --verde: #0F6E56;
+  --verde-light: #E1F5EE;
+  --verde-dark: #085041;
+  --rosso: #993C1D;
+  --rosso-light: #FAECE7;
+  --testo: #1a1a1a;
+  --testo2: #555;
+  --testo3: #888;
+  --bordo: #ddd;
+  --bordo2: #eee;
+  --sfondo: #f8f8f6;
+  --bianco: #ffffff;
+  --radius: 10px;
+  --radius-sm: 6px;
+}
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--sfondo);
+  color: var(--testo);
+  min-height: 100vh;
+}
+.container { max-width: 760px; margin: 0 auto; padding: 1.5rem 1rem 4rem; }
+
+/* HEADER */
+.header {
+  background: var(--bianco);
+  border-radius: var(--radius);
+  border: 0.5px solid var(--bordo);
+  padding: 1.5rem;
+  margin-bottom: 1.25rem;
+}
+.header-top { display: flex; align-items: center; gap: 10px; margin-bottom: 0.5rem; flex-wrap: wrap; }
+.badge { font-size: 11px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--verde); background: var(--verde-light); padding: 3px 10px; border-radius: 20px; }
+.istituzione { font-size: 12px; color: var(--testo3); }
+.header h1 { font-size: 22px; font-weight: 600; color: var(--testo); line-height: 1.25; margin-bottom: 4px; font-family: Georgia, serif; }
+.header .tema { font-size: 13px; color: var(--testo2); font-style: italic; margin-bottom: 0.75rem; }
+.header-info { display: flex; gap: 8px; flex-wrap: wrap; }
+.pill { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; padding: 4px 11px; border-radius: 20px; }
+.pill-verde { background: var(--verde-light); color: var(--verde-dark); }
+.pill-rosso { background: var(--rosso-light); color: var(--rosso); }
+
+/* TABS */
+.tabs { display: flex; gap: 4px; background: var(--bianco); border: 0.5px solid var(--bordo); border-radius: var(--radius); padding: 5px; margin-bottom: 1.25rem; }
+.tab { flex: 1; padding: 8px 4px; background: none; border: none; border-radius: var(--radius-sm); font-size: 13px; font-weight: 500; color: var(--testo2); cursor: pointer; font-family: inherit; transition: all 0.15s; display: flex; align-items: center; justify-content: center; gap: 5px; }
+.tab.active { background: var(--verde); color: white; }
+.tab:hover:not(.active) { background: var(--sfondo); }
+.panel { display: none; }
+.panel.active { display: block; }
+
+/* STATS */
+.stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 1.25rem; }
+.stat { background: var(--bianco); border: 0.5px solid var(--bordo); border-radius: var(--radius); padding: 1rem; text-align: center; }
+.stat .n { font-size: 30px; font-weight: 600; color: var(--verde); line-height: 1; }
+.stat .l { font-size: 12px; color: var(--testo3); margin-top: 4px; }
+
+/* FILTRI */
+.filtri { display: flex; gap: 8px; margin-bottom: 1rem; flex-wrap: wrap; }
+.filtri input, .filtri select {
+  font-size: 13px; padding: 7px 10px;
+  border: 0.5px solid var(--bordo); border-radius: var(--radius-sm);
+  background: var(--bianco); color: var(--testo); font-family: inherit;
+  flex: 1; min-width: 130px;
+}
+
+/* BANNER */
+.banner {
+  display: none; align-items: center; gap: 10px;
+  background: var(--verde-light); color: var(--verde-dark);
+  border-radius: var(--radius-sm); padding: 0.75rem 1rem;
+  font-size: 13px; margin-bottom: 1.25rem;
+  border: 0.5px solid #9ed8c6;
+}
+.banner.show { display: flex; }
+
+/* CARD RACCONTO */
+.card {
+  background: var(--bianco);
+  border: 0.5px solid var(--bordo);
+  border-radius: var(--radius);
+  padding: 1.1rem 1.25rem;
+  margin-bottom: 10px;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.card:hover { border-color: #bbb; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+.card.mio-voto { border-color: var(--verde); border-width: 1.5px; }
+.card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.chip-row { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 5px; }
+.chip { font-size: 11px; padding: 2px 8px; border-radius: 20px; font-weight: 500; }
+.c1 { background: #E6F1FB; color: #185FA5; }
+.c2 { background: #EEEDFE; color: #534AB7; }
+.c3 { background: #FAEEDA; color: #854F0B; }
+.cv { background: #EAF3DE; color: #3B6D11; }
+.ci { background: #FBEAF0; color: #993556; }
+.card-titolo { font-size: 16px; font-weight: 600; color: var(--testo); font-family: Georgia, serif; margin-bottom: 2px; }
+.card-autore { font-size: 13px; color: var(--testo2); }
+.card-scuola { font-size: 12px; color: var(--testo3); margin-top: 2px; }
+.card-abstract { font-size: 13px; color: var(--testo2); margin-top: 8px; line-height: 1.6; }
+.card-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
+.btn-vota {
+  padding: 8px 16px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 600;
+  cursor: pointer; border: 0.5px solid var(--bordo); background: var(--bianco);
+  color: var(--testo); font-family: inherit; white-space: nowrap; transition: all 0.15s;
+  display: flex; align-items: center; gap: 5px;
+}
+.btn-vota:hover:not(:disabled):not(.votato) { background: var(--verde-light); border-color: var(--verde); color: var(--verde); }
+.btn-vota.votato { background: var(--verde-light); color: var(--verde); border-color: var(--verde); cursor: default; }
+.btn-vota:disabled:not(.votato) { opacity: 0.45; cursor: not-allowed; }
+.voti-label { font-size: 12px; color: var(--testo3); }
+.barra-wrap { height: 3px; background: var(--bordo2); border-radius: 2px; margin-top: 10px; overflow: hidden; }
+.barra-fill { height: 100%; background: var(--verde); border-radius: 2px; transition: width 0.4s; }
+
+/* MODALE */
+.overlay { position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,0.45); display: none; align-items: center; justify-content: center; z-index: 200; padding: 1rem; }
+.overlay.show { display: flex; }
+.modale { background: var(--bianco); border-radius: var(--radius); padding: 1.5rem; width: 100%; max-width: 440px; box-shadow: 0 8px 32px rgba(0,0,0,0.15); }
+.modale h2 { font-size: 18px; font-weight: 600; font-family: Georgia, serif; margin-bottom: 0.5rem; }
+.modale .sub { font-size: 13px; color: var(--testo2); margin-bottom: 1.25rem; }
+.campo { margin-bottom: 0.9rem; }
+.campo label { display: block; font-size: 12px; font-weight: 600; color: var(--testo2); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
+.campo input, .campo textarea {
+  width: 100%; font-size: 14px; padding: 9px 11px;
+  border: 0.5px solid var(--bordo); border-radius: var(--radius-sm);
+  background: var(--bianco); color: var(--testo); font-family: inherit;
+}
+.campo input:focus, .campo textarea:focus { outline: none; border-color: var(--verde); }
+.campo textarea { resize: vertical; min-height: 68px; }
+.errore { font-size: 12px; color: var(--rosso); margin-top: 0.5rem; display: none; }
+.azioni { display: flex; gap: 8px; justify-content: flex-end; margin-top: 1.25rem; }
+.btn-annulla { padding: 8px 16px; border: 0.5px solid var(--bordo); border-radius: var(--radius-sm); background: none; color: var(--testo2); font-size: 13px; cursor: pointer; font-family: inherit; }
+.btn-ok { padding: 8px 20px; border: none; border-radius: var(--radius-sm); background: var(--verde); color: white; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; display: flex; align-items: center; gap: 5px; }
+.btn-ok:hover { background: var(--verde-dark); }
+
+/* CLASSIFICA */
+.sezione-tip { background: var(--bianco); border: 0.5px solid var(--bordo); border-radius: var(--radius); padding: 1.1rem 1.25rem; margin-bottom: 10px; }
+.sezione-tip h3 { font-size: 14px; font-weight: 600; color: var(--testo); margin-bottom: 0.75rem; border-bottom: 0.5px solid var(--bordo2); padding-bottom: 0.5rem; }
+.riga-cls { display: flex; align-items: center; gap: 10px; padding: 7px 0; border-bottom: 0.5px solid var(--bordo2); }
+.riga-cls:last-child { border-bottom: none; }
+.pos { font-size: 13px; font-weight: 700; color: var(--testo3); width: 22px; flex-shrink: 0; }
+.pos.oro { color: #C89B14; }
+.cls-info { flex: 1; min-width: 0; }
+.cls-titolo { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cls-autore { font-size: 11px; color: var(--testo3); }
+.cls-barra { width: 70px; height: 4px; background: var(--bordo2); border-radius: 2px; flex-shrink: 0; overflow: hidden; }
+.cls-fill { height: 100%; background: var(--verde); border-radius: 2px; }
+.cls-voti { font-size: 13px; font-weight: 700; color: var(--verde); min-width: 28px; text-align: right; flex-shrink: 0; }
+
+/* ADMIN */
+.admin-box { background: var(--bianco); border: 0.5px solid var(--bordo); border-radius: var(--radius); padding: 1.25rem; margin-bottom: 1rem; }
+.admin-box h3 { font-size: 14px; font-weight: 600; margin-bottom: 1rem; display: flex; align-items: center; gap: 6px; }
+.griglia2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.campo-admin { margin-bottom: 0.85rem; }
+.campo-admin label { display: block; font-size: 12px; font-weight: 600; color: var(--testo2); margin-bottom: 4px; }
+.campo-admin input, .campo-admin select, .campo-admin textarea {
+  width: 100%; font-size: 13px; padding: 8px 10px;
+  border: 0.5px solid var(--bordo); border-radius: var(--radius-sm);
+  background: var(--bianco); color: var(--testo); font-family: inherit;
+}
+.campo-admin textarea { min-height: 65px; resize: vertical; }
+.btn-aggiungi { padding: 8px 20px; border: none; border-radius: var(--radius-sm); background: var(--verde); color: white; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; }
+.toggle-riga { display: flex; align-items: center; gap: 10px; }
+.toggle { width: 38px; height: 22px; background: var(--bordo); border-radius: 11px; position: relative; cursor: pointer; border: none; transition: background 0.2s; flex-shrink: 0; }
+.toggle.on { background: var(--verde); }
+.toggle::after { content: ''; position: absolute; width: 16px; height: 16px; background: white; border-radius: 50%; top: 3px; left: 3px; transition: left 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+.toggle.on::after { left: 19px; }
+.toggle-lbl { font-size: 14px; color: var(--testo); }
+.riga-admin { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 0.5px solid var(--bordo2); }
+.riga-admin:last-child { border-bottom: none; }
+.riga-admin-info { flex: 1; min-width: 0; }
+.riga-admin-titolo { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.riga-admin-sub { font-size: 11px; color: var(--testo3); }
+.btn-del { background: none; border: none; cursor: pointer; color: var(--testo3); font-size: 18px; padding: 3px; line-height: 1; transition: color 0.15s; }
+.btn-del:hover { color: #c0392b; }
+
+/* VUOTO */
+.vuoto { text-align: center; padding: 2.5rem 1rem; color: var(--testo3); font-size: 14px; }
+.vuoto i { font-size: 32px; display: block; margin-bottom: 10px; }
+
+/* ADMIN PIN */
+.pin-overlay { position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 300; padding: 1rem; }
+.pin-overlay.show { display: flex; }
+.pin-box { background: var(--bianco); border-radius: var(--radius); padding: 1.5rem; width: 100%; max-width: 320px; text-align: center; }
+.pin-box h3 { font-size: 17px; font-weight: 600; margin-bottom: 0.5rem; }
+.pin-box p { font-size: 13px; color: var(--testo2); margin-bottom: 1rem; }
+.pin-box input { width: 100%; font-size: 20px; text-align: center; letter-spacing: 0.3em; padding: 10px; border: 0.5px solid var(--bordo); border-radius: var(--radius-sm); font-family: inherit; margin-bottom: 0.75rem; }
+.pin-err { font-size: 12px; color: var(--rosso); min-height: 18px; margin-bottom: 0.5rem; }
+
+@media (max-width: 520px) {
+  .griglia2 { grid-template-columns: 1fr; }
+  .stats { grid-template-columns: repeat(3,1fr); }
+  .stat .n { font-size: 22px; }
+  .tab { font-size: 12px; }
+  .card-titolo { font-size: 15px; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-top">
+      <span class="badge">XXI Edizione</span>
+      <span class="istituzione">Istituzione G. Tomasi di Lampedusa · Comune di Santa Margherita di Belìce</span>
+    </div>
+    <h1>L'Officina del Racconto 2026</h1>
+    <div class="tema">Scrivere per resistere, resistere per rimanere liberi e umani.</div>
+    <div class="header-info">
+      <span class="pill pill-verde"><i class="ti ti-heart"></i> Votazione popolare aperta</span>
+      <span class="pill pill-rosso"><i class="ti ti-calendar"></i> Un voto per persona</span>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab active" onclick="mostraTab('vota', this)"><i class="ti ti-heart"></i> Vota</button>
+    <button class="tab" onclick="mostraTab('classifica', this)"><i class="ti ti-chart-bar"></i> Classifica</button>
+    <button class="tab" onclick="mostraTab('admin', this)"><i class="ti ti-settings"></i> Gestione</button>
+  </div>
+
+  <!-- PANEL VOTA -->
+  <div id="panel-vota" class="panel active">
+    <div class="stats">
+      <div class="stat"><div class="n" id="s-racconti">0</div><div class="l">racconti in gara</div></div>
+      <div class="stat"><div class="n" id="s-voti">0</div><div class="l">voti espressi</div></div>
+      <div class="stat"><div class="n">3</div><div class="l">tipologie</div></div>
+    </div>
+    <div id="banner-voto" class="banner">
+      <i class="ti ti-circle-check" style="font-size:18px;flex-shrink:0"></i>
+      <span>Hai già espresso il tuo voto. Grazie per aver partecipato!</span>
+    </div>
+    <div class="filtri">
+      <input type="text" id="cerca" placeholder="Cerca titolo o autore…" oninput="renderVota()">
+      <select id="f-tip" onchange="renderVota()">
+        <option value="">Tutte le tipologie</option>
+        <option value="1">Tipologia 1 – Comprensivi</option>
+        <option value="2">Tipologia 2 – Superiori</option>
+        <option value="3">Tipologia 3 – Under 30</option>
+      </select>
+      <select id="f-fmt" onchange="renderVota()">
+        <option value="">Tutti i formati</option>
+        <option value="scritto">Racconto scritto</option>
+        <option value="illustrato">Racconto illustrato</option>
+        <option value="video">Video-racconto</option>
+      </select>
+    </div>
+    <div id="lista-racconti"></div>
+  </div>
+
+  <!-- PANEL CLASSIFICA -->
+  <div id="panel-classifica" class="panel">
+    <div id="lista-classifica"></div>
+  </div>
+
+  <!-- PANEL ADMIN -->
+  <div id="panel-admin" class="panel">
+
+    <div class="admin-box">
+      <h3><i class="ti ti-toggle-right"></i> Stato votazione</h3>
+      <div class="toggle-riga">
+        <button class="toggle on" id="toggle-vot" onclick="toggleVotazione()"></button>
+        <span class="toggle-lbl" id="lbl-toggle">Votazione aperta al pubblico</span>
+      </div>
+      <p style="font-size:12px;color:var(--testo3);margin-top:8px">Quando disattivata, il pubblico può leggere i racconti ma il pulsante di voto è bloccato.</p>
+    </div>
+
+    <div class="admin-box">
+      <h3><i class="ti ti-file-plus"></i> Aggiungi racconto</h3>
+      <div class="campo-admin">
+        <label>Titolo del racconto *</label>
+        <input type="text" id="a-titolo" placeholder="Titolo dell'elaborato">
+      </div>
+      <div class="griglia2">
+        <div class="campo-admin">
+          <label>Autore/Autrice *</label>
+          <input type="text" id="a-autore" placeholder="Nome Cognome">
+        </div>
+        <div class="campo-admin">
+          <label>Tipologia *</label>
+          <select id="a-tip">
+            <option value="1">Tipologia 1 – Comprensivi</option>
+            <option value="2">Tipologia 2 – Superiori</option>
+            <option value="3">Tipologia 3 – Under 30</option>
+          </select>
+        </div>
+      </div>
+      <div class="griglia2">
+        <div class="campo-admin">
+          <label>Formato</label>
+          <select id="a-fmt">
+            <option value="scritto">Racconto scritto</option>
+            <option value="illustrato">Racconto illustrato</option>
+            <option value="video">Video-racconto</option>
+          </select>
+        </div>
+        <div class="campo-admin">
+          <label>Scuola / Classe (tip. 1 e 2)</label>
+          <input type="text" id="a-scuola" placeholder="es. IC Santa Margherita, III B">
+        </div>
+      </div>
+      <div class="campo-admin">
+        <label>Sintesi / Abstract (facoltativo)</label>
+        <textarea id="a-abstract" placeholder="Breve descrizione del racconto…"></textarea>
+      </div>
+      <div style="display:flex;justify-content:flex-end">
+        <button class="btn-aggiungi" onclick="aggiungiRacconto()">
+          <i class="ti ti-plus"></i> Aggiungi racconto
+        </button>
+      </div>
+    </div>
+
+    <div class="admin-box">
+      <h3><i class="ti ti-list"></i> Racconti caricati</h3>
+      <div id="lista-admin"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- MODALE VOTO -->
+<div class="overlay" id="overlay-voto">
+  <div class="modale">
+    <h2>Conferma il tuo voto</h2>
+    <div class="sub">Stai votando per: <strong id="m-titolo"></strong></div>
+    <div class="campo">
+      <label>Nome e Cognome *</label>
+      <input type="text" id="v-nome" placeholder="Mario Rossi" autocomplete="name">
+    </div>
+    <div class="campo">
+      <label>Indirizzo email *</label>
+      <input type="email" id="v-email" placeholder="mario.rossi@email.it" autocomplete="email">
+    </div>
+    <div class="campo">
+      <label>Motivazione (facoltativa)</label>
+      <textarea id="v-motivo" placeholder="Perché hai scelto questo racconto?"></textarea>
+    </div>
+    <div class="errore" id="m-errore"></div>
+    <div class="azioni">
+      <button class="btn-annulla" onclick="chiudiModal()">Annulla</button>
+      <button class="btn-ok" onclick="confermaVoto()"><i class="ti ti-heart"></i> Conferma voto</button>
+    </div>
+  </div>
+</div>
+
+<!-- PIN ADMIN -->
+<div class="pin-overlay" id="overlay-pin">
+  <div class="pin-box">
+    <h3><i class="ti ti-lock"></i> Accesso gestione</h3>
+    <p>Inserisci il codice PIN per accedere al pannello di gestione.</p>
+    <input type="password" id="pin-input" maxlength="6" placeholder="• • • • • •" onkeydown="if(event.key==='Enter')verificaPin()">
+    <div class="pin-err" id="pin-err"></div>
+    <button class="btn-ok" style="width:100%;justify-content:center" onclick="verificaPin()"><i class="ti ti-login"></i> Accedi</button>
+  </div>
+</div>
+
+<script>
+// ─── CONFIGURAZIONE ────────────────────────────────────────────────
+const PIN_ADMIN = '2026';   // ← cambia questo PIN prima di pubblicare
+
+// ─── STORAGE ───────────────────────────────────────────────────────
+const K_RACCONTI = 'odr2026_racconti';
+const K_VOTO_ID  = 'odr2026_mio_voto';
+const K_APERTA   = 'odr2026_aperta';
+
+let racconti = [];
+let mioVotoId = null;
+let votazioneAperta = true;
+let pendingId = null;
+let adminSblocato = false;
+
+function leggi() {
+  try { racconti = JSON.parse(localStorage.getItem(K_RACCONTI)) || []; } catch(e) { racconti = []; }
+  try { mioVotoId = localStorage.getItem(K_VOTO_ID) || null; } catch(e) {}
+  try { const a = localStorage.getItem(K_APERTA); votazioneAperta = a === null ? true : a === 'true'; } catch(e) {}
+}
+
+function salva() {
+  try {
+    localStorage.setItem(K_RACCONTI, JSON.stringify(racconti));
+    localStorage.setItem(K_APERTA, String(votazioneAperta));
+  } catch(e) {}
+}
+
+// ─── UTILITY ───────────────────────────────────────────────────────
+function chipTip(t) {
+  const cls = {1:'c1',2:'c2',3:'c3'}[t]||'c3';
+  const lbl = {1:'Tip. 1 – Comprensivo',2:'Tip. 2 – Superiori',3:'Tip. 3 – Under 30'}[t]||'';
+  return `<span class="chip ${cls}">${lbl}</span>`;
+}
+function chipFmt(f) {
+  if(f==='video') return `<span class="chip cv">Video-racconto</span>`;
+  if(f==='illustrato') return `<span class="chip ci">Racconto illustrato</span>`;
+  return '';
+}
+function maxVoti() { return racconti.reduce((m,r)=>Math.max(m,r.voti),1); }
+function totVoti() { return racconti.reduce((s,r)=>s+r.voti,0); }
+
+// ─── RENDER VOTA ───────────────────────────────────────────────────
+function renderVota() {
+  const cerca = document.getElementById('cerca').value.toLowerCase();
+  const fTip  = document.getElementById('f-tip').value;
+  const fFmt  = document.getElementById('f-fmt').value;
+
+  document.getElementById('s-racconti').textContent = racconti.length;
+  document.getElementById('s-voti').textContent = totVoti();
+
+  const banner = document.getElementById('banner-voto');
+  banner.classList.toggle('show', !!mioVotoId);
+
+  let filtrati = racconti.filter(r => {
+    if(fTip && r.tipologia !== fTip) return false;
+    if(fFmt && r.formato !== fFmt) return false;
+    if(cerca && !r.titolo.toLowerCase().includes(cerca) && !r.autore.toLowerCase().includes(cerca)) return false;
+    return true;
+  });
+
+  const el = document.getElementById('lista-racconti');
+  if(filtrati.length === 0) {
+    el.innerHTML = '<div class="vuoto"><i class="ti ti-mood-empty"></i>Nessun racconto trovato.</div>';
+    return;
+  }
+
+  const mv = maxVoti();
+  el.innerHTML = filtrati.map(r => {
+    const isIlMio = mioVotoId === r.id;
+    const disab = (!votazioneAperta || (!!mioVotoId && !isIlMio));
+    const pct = mv > 0 ? Math.round((r.voti/mv)*100) : 0;
+    return `<div class="card ${isIlMio?'mio-voto':''}">
+      <div class="card-top">
+        <div style="flex:1;min-width:0">
+          <div class="chip-row">${chipTip(r.tipologia)}${chipFmt(r.formato)}</div>
+          <div class="card-titolo">${r.titolo}</div>
+          <div class="card-autore">${r.autore}</div>
+          ${r.scuola?`<div class="card-scuola">${r.scuola}</div>`:''}
+          ${r.abstract?`<div class="card-abstract">${r.abstract}</div>`:''}
+        </div>
+        <div class="card-right">
+          <button class="btn-vota${isIlMio?' votato':''}" ${disab?'disabled':''} onclick="apriModal('${r.id}')">
+            <i class="ti ti-${isIlMio?'check':'heart'}"></i>${isIlMio?'Votato':'Vota'}
+          </button>
+          <div class="voti-label">${r.voti} ${r.voti===1?'voto':'voti'}</div>
+        </div>
+      </div>
+      <div class="barra-wrap"><div class="barra-fill" style="width:${pct}%"></div></div>
+    </div>`;
+  }).join('');
+}
+
+// ─── RENDER CLASSIFICA ─────────────────────────────────────────────
+function renderClassifica() {
+  const el = document.getElementById('lista-classifica');
+  if(racconti.length===0){
+    el.innerHTML='<div class="vuoto"><i class="ti ti-trophy"></i>Nessun racconto ancora caricato.</div>';
+    return;
+  }
+  const mv = maxVoti();
+  let html='';
+  ['1','2','3'].forEach(tip=>{
+    const gruppo = [...racconti].filter(r=>r.tipologia===tip).sort((a,b)=>b.voti-a.voti);
+    if(!gruppo.length) return;
+    const lbl = {1:'Tipologia 1 – Istituti Comprensivi',2:'Tipologia 2 – Istituti Superiori',3:'Tipologia 3 – Under 30'}[tip];
+    html+=`<div class="sezione-tip"><h3>${lbl}</h3>`;
+    gruppo.forEach((r,i)=>{
+      const pct=mv>0?Math.round((r.voti/mv)*100):0;
+      html+=`<div class="riga-cls">
+        <div class="pos${i===0?' oro':''}">${i+1}.</div>
+        <div class="cls-info"><div class="cls-titolo">${r.titolo}</div><div class="cls-autore">${r.autore}</div></div>
+        <div class="cls-barra"><div class="cls-fill" style="width:${pct}%"></div></div>
+        <div class="cls-voti">${r.voti}</div>
+      </div>`;
+    });
+    html+='</div>';
+  });
+  el.innerHTML=html;
+}
+
+// ─── RENDER ADMIN ──────────────────────────────────────────────────
+function renderAdmin() {
+  const el=document.getElementById('lista-admin');
+  if(racconti.length===0){
+    el.innerHTML='<div class="vuoto" style="padding:1rem">Nessun racconto caricato.</div>';
+    return;
+  }
+  el.innerHTML=racconti.map(r=>`
+    <div class="riga-admin">
+      <div class="riga-admin-info">
+        <div class="riga-admin-titolo">${r.titolo}</div>
+        <div class="riga-admin-sub">${r.autore} · Tip.${r.tipologia} · ${r.voti} voti</div>
+      </div>
+      <button class="btn-del" onclick="eliminaRacconto('${r.id}')" title="Elimina"><i class="ti ti-trash"></i></button>
+    </div>`).join('');
+  const tog=document.getElementById('toggle-vot');
+  const lbl=document.getElementById('lbl-toggle');
+  tog.classList.toggle('on',votazioneAperta);
+  lbl.textContent=votazioneAperta?'Votazione aperta al pubblico':'Votazione chiusa';
+}
+
+function renderTutto() { renderVota(); renderClassifica(); renderAdmin(); }
+
+// ─── TABS ──────────────────────────────────────────────────────────
+function mostraTab(id, btn) {
+  if(id==='admin' && !adminSblocato){ apriPin(); return; }
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('panel-'+id).classList.add('active');
+  if(id==='classifica') renderClassifica();
+  if(id==='admin') renderAdmin();
+}
+
+// ─── MODALE VOTO ───────────────────────────────────────────────────
+function apriModal(id) {
+  if(mioVotoId || !votazioneAperta) return;
+  pendingId=id;
+  const r=racconti.find(x=>x.id===id);
+  document.getElementById('m-titolo').textContent=`"${r.titolo}" di ${r.autore}`;
+  document.getElementById('v-nome').value='';
+  document.getElementById('v-email').value='';
+  document.getElementById('v-motivo').value='';
+  document.getElementById('m-errore').style.display='none';
+  document.getElementById('overlay-voto').classList.add('show');
+}
+function chiudiModal() {
+  document.getElementById('overlay-voto').classList.remove('show');
+  pendingId=null;
+}
+function confermaVoto() {
+  const nome=document.getElementById('v-nome').value.trim();
+  const email=document.getElementById('v-email').value.trim();
+  const err=document.getElementById('m-errore');
+  if(!nome||!email){ err.textContent='Nome, cognome e email sono obbligatori.'; err.style.display='block'; return; }
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ err.textContent='Inserisci un indirizzo email valido.'; err.style.display='block'; return; }
+  const r=racconti.find(x=>x.id===pendingId);
+  if(r) r.voti++;
+  mioVotoId=pendingId;
+  try{ localStorage.setItem(K_VOTO_ID, mioVotoId); }catch(e){}
+  salva();
+  chiudiModal();
+  renderTutto();
+}
+
+// ─── ADMIN ─────────────────────────────────────────────────────────
+function apriPin() {
+  document.getElementById('pin-input').value='';
+  document.getElementById('pin-err').textContent='';
+  document.getElementById('overlay-pin').classList.add('show');
+  setTimeout(()=>document.getElementById('pin-input').focus(),100);
+}
+function verificaPin() {
+  const val=document.getElementById('pin-input').value;
+  if(val===PIN_ADMIN){
+    document.getElementById('overlay-pin').classList.remove('show');
+    adminSblocato=true;
+    document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+    document.querySelectorAll('.tab')[2].classList.add('active');
+    document.getElementById('panel-admin').classList.add('active');
+    renderAdmin();
+  } else {
+    document.getElementById('pin-err').textContent='PIN non corretto. Riprova.';
+    document.getElementById('pin-input').value='';
+  }
+}
+
+function aggiungiRacconto() {
+  const titolo=document.getElementById('a-titolo').value.trim();
+  const autore=document.getElementById('a-autore').value.trim();
+  if(!titolo||!autore){ alert('Titolo e autore sono obbligatori.'); return; }
+  racconti.push({
+    id:'r'+Date.now(),
+    titolo, autore,
+    tipologia: document.getElementById('a-tip').value,
+    formato: document.getElementById('a-fmt').value,
+    scuola: document.getElementById('a-scuola').value.trim(),
+    abstract: document.getElementById('a-abstract').value.trim(),
+    voti: 0
+  });
+  salva();
+  ['a-titolo','a-autore','a-scuola','a-abstract'].forEach(id=>document.getElementById(id).value='');
+  renderTutto();
+  alert('✅ Racconto aggiunto con successo!');
+}
+
+function eliminaRacconto(id) {
+  if(!confirm('Eliminare questo racconto? L\'operazione non è reversibile.')) return;
+  racconti=racconti.filter(r=>r.id!==id);
+  if(mioVotoId===id){ mioVotoId=null; try{localStorage.removeItem(K_VOTO_ID);}catch(e){} }
+  salva(); renderTutto();
+}
+
+function toggleVotazione() {
+  votazioneAperta=!votazioneAperta;
+  salva(); renderTutto();
+}
+
+// ─── INIT ──────────────────────────────────────────────────────────
+leggi();
+renderTutto();
+</script>
+</body>
+</html>
