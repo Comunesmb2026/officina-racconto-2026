@@ -365,8 +365,7 @@ body {
 <script>
 // ─── CONFIGURAZIONE ────────────────────────────────────────────────
 const PIN_ADMIN = '2026';   // ← cambia questo PIN prima di pubblicare
-const VOTAZIONE_DEFAULT = true;  // ← true = aperta, false = chiusa
-
+const STATO_VOTAZIONE = "APERTA";  // scrivi APERTA o CHIUSA
 // ─── STORAGE ───────────────────────────────────────────────────────
 const K_RACCONTI = 'odr2026_racconti';
 const K_VOTO_ID  = 'odr2026_mio_voto';
@@ -381,8 +380,7 @@ let adminSblocato = false;
 function leggi() {
   try { racconti = JSON.parse(localStorage.getItem(K_RACCONTI)) || []; } catch(e) { racconti = []; }
   try { mioVotoId = localStorage.getItem(K_VOTO_ID) || null; } catch(e) {}
-  votazioneAperta = VOTAZIONE_DEFAULT; // controllato solo dal codice
-}
+  votazioneAperta = (STATO_VOTAZIONE === "APERTA");}
 
 function salva() {
   try {
