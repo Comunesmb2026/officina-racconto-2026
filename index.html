@@ -294,16 +294,19 @@ function salva() {
 function aggiornaUI() {
   const pill = document.getElementById('pill-stato');
   const stato = document.getElementById('stato-display');
+  const btn = document.getElementById('btn-toggle-stato');
   if(isVotazioneAperta()) {
     pill.innerHTML = '<i class="ti ti-heart"></i> Votazione popolare aperta';
     pill.className = 'pill pill-verde';
     stato.textContent = '● VOTAZIONE APERTA';
     stato.className = 'stato-attuale aperta';
+    if(btn) btn.innerHTML = '<i class="ti ti-lock"></i> Chiudi votazione';
   } else {
     pill.innerHTML = '<i class="ti ti-lock"></i> Votazione chiusa';
     pill.className = 'pill pill-rosso';
     stato.textContent = '● VOTAZIONE CHIUSA';
     stato.className = 'stato-attuale chiusa';
+    if(btn) btn.innerHTML = '<i class="ti ti-heart"></i> Apri votazione';
   }
 }
 
@@ -546,3 +549,7 @@ caricaStatoGlobale();
 </script>
 </body>
 </html>
+
+{
+  "stato": "APERTA"
+}
