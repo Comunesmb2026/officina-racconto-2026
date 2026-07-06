@@ -62,6 +62,13 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .voti-label { font-size: 12px; color: var(--testo3); }
 .barra-wrap { height: 3px; background: var(--bordo2); border-radius: 2px; margin-top: 10px; overflow: hidden; }
 .barra-fill { height: 100%; background: var(--verde); border-radius: 2px; transition: width 0.4s; }
+
+/* VIDEO PLAYER */
+.video-wrap { margin-top: 12px; border-radius: var(--radius-sm); overflow: hidden; background: #000; }
+.video-wrap iframe { width: 100%; height: 210px; border: none; display: block; }
+.btn-video { display: inline-flex; align-items: center; gap: 6px; margin-top: 8px; font-size: 12px; font-weight: 500; color: var(--verde); background: var(--verde-light); border: none; border-radius: 20px; padding: 4px 12px; cursor: pointer; font-family: inherit; text-decoration: none; }
+.btn-video:hover { background: #c5ede2; }
+
 .overlay { position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,0.45); display: none; align-items: center; justify-content: center; z-index: 200; padding: 1rem; }
 .overlay.show { display: flex; }
 .modale { background: var(--bianco); border-radius: var(--radius); padding: 1.5rem; width: 100%; max-width: 440px; box-shadow: 0 8px 32px rgba(0,0,0,0.15); }
@@ -216,6 +223,11 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
         <div class="campo-admin"><label>Scuola / Classe (tip. 1 e 2)</label><input type="text" id="a-scuola" placeholder="es. IC Santa Margherita, III B"></div>
       </div>
       <div class="campo-admin"><label>Sintesi / Abstract (facoltativo)</label><textarea id="a-abstract" placeholder="Breve descrizione del racconto…"></textarea></div>
+      <div class="campo-admin">
+        <label>🎬 Link video YouTube (solo per video-racconti)</label>
+        <input type="text" id="a-video" placeholder="es. https://youtu.be/ABC123 oppure https://www.youtube.com/watch?v=ABC123">
+        <div style="font-size:11px;color:var(--testo3);margin-top:4px">Incolla il link YouTube. Il player verrà mostrato nella card pubblica.</div>
+      </div>
       <div style="display:flex;justify-content:flex-end"><button class="btn-aggiungi" onclick="aggiungiRacconto()"><i class="ti ti-plus"></i> Aggiungi racconto</button></div>
     </div>
 
@@ -289,6 +301,20 @@ function leggi() {
 }
 function salva() {
   try { localStorage.setItem(K_RACCONTI, JSON.stringify(racconti)); } catch(e) {}
+}
+
+
+// Estrae ID YouTube da qualsiasi formato link
+function estraiYoutubeId(url) {
+  if(!url) return null;
+  url = url.trim();
+  let m = url.match(/youtu\.be\/([a-zA-Z0-9_-]{11})/);
+  if(m) return m[1];
+  m = url.match(/[?&]v=([a-zA-Z0-9_-]{11})/);
+  if(m) return m[1];
+  m = url.match(/embed\/([a-zA-Z0-9_-]{11})/);
+  if(m) return m[1];
+  return null;
 }
 
 function aggiornaUI() {
@@ -412,6 +438,7 @@ function renderVota() {
           <div class="card-autore">${r.autore}</div>
           ${r.scuola?`<div class="card-scuola">${r.scuola}</div>`:''}
           ${r.abstract?`<div class="card-abstract">${r.abstract}</div>`:''}
+          ${(()=>{ const ytId=estraiYoutubeId(r.video||''); return ytId ? `<div class="video-wrap"><iframe src="https://www.youtube.com/embed/${ytId}" allowfullscreen loading="lazy"></iframe></div>` : (r.video?`<a class="btn-video" href="${r.video}" target="_blank"><i class="ti ti-brand-youtube"></i> Guarda il video</a>`:''); })()}
         </div>
         <div class="card-right">
           <button class="btn-vota${isIlMio?' votato':''}" ${disab?'disabled':''} onclick="apriModal('${r.id}')">
@@ -456,7 +483,7 @@ function renderAdmin() {
     <div class="riga-admin">
       <div class="riga-admin-info">
         <div class="riga-admin-titolo">${r.titolo}</div>
-        <div class="riga-admin-sub">${r.autore} · Tip.${r.tipologia} · ${r.voti} voti</div>
+        <div class="riga-admin-sub">${r.autore} · Tip.${r.tipologia} · ${r.formato} · ${r.voti} voti${r.video?' · 🎬':''}</div>
       </div>
       <button class="btn-del" onclick="eliminaRacconto('${r.id}')" title="Elimina"><i class="ti ti-trash"></i></button>
     </div>`).join('');
