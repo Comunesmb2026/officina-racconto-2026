@@ -280,7 +280,6 @@ const REPO       = 'comunesmb2026/officina-racconto-2026'; // repo GitHub Pages
 const PIN_ADMIN  = '2026';
 const K_VOTO_ID  = 'odr2026_mio_voto';
 // Contatore voti pubblico e gratuito (nessuna registrazione richiesta), condiviso tra TUTTI i dispositivi.
-// Namespace univoco per evitare collisioni con altri utenti del servizio.
 const COUNTER_NS = 'officina-racconto-2026-comunesmb-smb';
 
 let STATO_VOTAZIONE = "APERTA";
@@ -323,9 +322,15 @@ async function caricaRacconti() {
   }
 }
 
+// Prefisso fisso davanti all'id del racconto prima di interrogare il contatore.
+// Chiavi troppo corte e generiche come "r1", "r2" risultano bloccate/corrotte sul
+// servizio pubblico condiviso perché riusate da moltissimi altri siti nel mondo.
+// Con un prefisso specifico del progetto la chiave diventa unica e il problema sparisce.
+function chiaveContatore(id) { return 'voto-officina2026smb-' + id; }
+
 async function leggiContatore(id) {
   try {
-    const res = await fetch(`https://abacus.jasoncameron.dev/get/${COUNTER_NS}/${encodeURIComponent(id)}`);
+    const res = await fetch(`https://abacus.jasoncameron.dev/get/${COUNTER_NS}/${encodeURIComponent(chiaveContatore(id))}`);
     if(!res.ok) return 0;
     const data = await res.json();
     return (data && typeof data.value === 'number') ? data.value : 0;
@@ -335,7 +340,7 @@ async function leggiContatore(id) {
 }
 
 async function incrementaContatore(id) {
-  const res = await fetch(`https://abacus.jasoncameron.dev/hit/${COUNTER_NS}/${encodeURIComponent(id)}`);
+  const res = await fetch(`https://abacus.jasoncameron.dev/hit/${COUNTER_NS}/${encodeURIComponent(chiaveContatore(id))}`);
   if(!res.ok) throw new Error('Servizio voti non raggiungibile');
   const data = await res.json();
   return (data && typeof data.value === 'number') ? data.value : null;
