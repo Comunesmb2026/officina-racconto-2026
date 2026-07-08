@@ -1,0 +1,42 @@
+[
+  {
+    "id": "r1",
+    "titolo": "Oltre le aspettative",
+    "autore": "Di Blasi Gloria",
+    "tipologia": "1",
+    "formato": "scritto",
+    "scuola": "Ist. Compr. Montalcini Partanna",
+    "abstract": "OLTRE LE ASPETTATIVE L'adolescenza è come trovarsi in una stanza dove le pareti si restringono ogni giorno sempre di più. Per Sofia, quella stanza era solo fatta di aspettative: la scuola, le persone attorno a lei che pretendevano troppo, il bisogno di essere \"perfetta\" agli occhi degli altri, in un mondo che cambiava troppo in fretta. Eppure, dietro quella maschera di totale indifferenza, Sofia sentiva crescere il bisogno di scoprire chi fosse davvero.",
+    "video": ""
+  },
+  {
+    "id": "r2",
+    "titolo": "Il cretto di carta",
+    "autore": "Drago Lara",
+    "tipologia": "1",
+    "formato": "scritto",
+    "scuola": "Ist. Compr. Montalcini Partanna",
+    "abstract": "\"IL CRETTO DI CARTA\" Tra i banchi di scuola a Partanna e il grande silenzio del Cretto di Burri la dodicenne Lucia si scontra con l'indifferenza dei compagni dopo un episodio di bullismo. Sarà la forza della memoria custodita in quel luogo così speciale, insieme ai racconti di famiglia, a darle il coraggio di reagire e di usare la scrittura per difendere la propria libertà.",
+    "video": ""
+  },
+  {
+    "id": "r3",
+    "titolo": "Il quaderno di cera",
+    "autore": "Gullo Giorgio",
+    "tipologia": "1",
+    "formato": "scritto",
+    "scuola": "Ist. Compr. Montalcini Partanna",
+    "abstract": "IL QUADERNO DI CERA A Donnafugata, dove tutto cambia per rimanere com'è, i vecchi gattopardi hanno ceduto il passo ai nuovi padroni del cemento e del profitto. Contro la loro geometrica ferocia e l'anestesia della memoria, il sedicenne Sebastiano oppone la resistenza della parola e il suo quaderno di cera diventa l'ultimo avamposto per rimanere liberi e umani.",
+    "video": ""
+  },
+  {
+    "id": "r4",
+    "titolo": "Quando le macerie fioriscono",
+    "autore": "Lombardo Vita Maria",
+    "tipologia": "1",
+    "formato": "scritto",
+    "scuola": "Ist. Compr. Montalcini Partanna",
+    "abstract": "",
+    "video": ""
+  }
+]
